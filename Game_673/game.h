@@ -2,7 +2,7 @@
 #define GAME_H
 
 #include <QWidget>
-
+#include <musicplayer.h>
 namespace Ui {
 class game;
 }
@@ -44,7 +44,7 @@ private:
         int num;
         slink *first;
     }bucket[imagenum+1];//存放不同类型图片的坐标，bucket[i]代表第i种图片的的坐标链表，用于辅助judge（）函数
-
+    MusicPlayer *player;
 };
 
 

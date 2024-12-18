@@ -410,9 +410,11 @@ Makefile: ../../Game_673.pro ../../../../6.7.3/mingw_64/mkspecs/features/spec_pr
 		../../../../6.7.3/mingw_64/mkspecs/features/yacc.prf \
 		../../../../6.7.3/mingw_64/mkspecs/features/lex.prf \
 		../../Game_673.pro \
+		../../../../6.7.3/mingw_64/lib/Qt6Multimedia.prl \
 		../../../../6.7.3/mingw_64/lib/Qt6Widgets.prl \
 		../../../../6.7.3/mingw_64/lib/Qt6Gui.prl \
 		../../../../6.7.3/mingw_64/lib/Qt6Sql.prl \
+		../../../../6.7.3/mingw_64/lib/Qt6Network.prl \
 		../../../../6.7.3/mingw_64/lib/Qt6Core.prl \
 		../../../../6.7.3/mingw_64/lib/Qt6EntryPoint.prl \
 		../../../../6.7.3/mingw_64/mkspecs/features/build_pass.prf \
@@ -759,9 +761,11 @@ Makefile: ../../Game_673.pro ../../../../6.7.3/mingw_64/mkspecs/features/spec_pr
 ../../../../6.7.3/mingw_64/mkspecs/features/yacc.prf:
 ../../../../6.7.3/mingw_64/mkspecs/features/lex.prf:
 ../../Game_673.pro:
+../../../../6.7.3/mingw_64/lib/Qt6Multimedia.prl:
 ../../../../6.7.3/mingw_64/lib/Qt6Widgets.prl:
 ../../../../6.7.3/mingw_64/lib/Qt6Gui.prl:
 ../../../../6.7.3/mingw_64/lib/Qt6Sql.prl:
+../../../../6.7.3/mingw_64/lib/Qt6Network.prl:
 ../../../../6.7.3/mingw_64/lib/Qt6Core.prl:
 ../../../../6.7.3/mingw_64/lib/Qt6EntryPoint.prl:
 ../../../../6.7.3/mingw_64/mkspecs/features/build_pass.prf:

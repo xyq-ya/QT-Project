@@ -6,6 +6,8 @@ game::game(QWidget *parent)
     , ui(new Ui::game)
 {
     ui->setupUi(this);
+    player = new MusicPlayer();
+    player->PlayBackground();
 }
 
 game::~game()
