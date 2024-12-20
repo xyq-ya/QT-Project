@@ -1,0 +1,10 @@
+debug/database.o
+debug/game.o
+debug/main.o
+debug/musicplayer.o
+debug/randnum.o
+debug/widget.o
+debug/qrc_images.o
+debug/qrc_qmake_qmake_qm_files.o
+debug/moc_game.o
+debug/moc_widget.o

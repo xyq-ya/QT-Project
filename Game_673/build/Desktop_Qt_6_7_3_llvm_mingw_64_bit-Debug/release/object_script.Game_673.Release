@@ -1,0 +1,10 @@
+release/database.o
+release/game.o
+release/main.o
+release/musicplayer.o
+release/randnum.o
+release/widget.o
+release/qrc_images.o
+release/qrc_qmake_qmake_qm_files.o
+release/moc_game.o
+release/moc_widget.o

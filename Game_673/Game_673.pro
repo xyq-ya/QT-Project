@@ -64,3 +64,6 @@ DISTFILES += \
     sound/pair.wav \
     sound/release.wav \
     sound/select.wav
+
+RESOURCES += \
+    images.qrc

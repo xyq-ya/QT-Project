@@ -1,8 +1,9 @@
-#include "widget.h"
 
+#include "game.h"
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
+
 
 int main(int argc, char *argv[])
 {
@@ -17,7 +18,12 @@ int main(int argc, char *argv[])
             break;
         }
     }
-    Widget w;
-    w.show();
+
+    srand(time(nullptr));
+    game g;
+    g.show();
+
+    /**Widget w;
+    w.show();*/
     return a.exec();
 }
