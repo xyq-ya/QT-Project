@@ -15,7 +15,8 @@ game::game(DifficultyLevel level, QWidget *parent)
     player->PlayBackground();
 
     // 根据难度调整地图
-    createmap();
+    setDifficulty(level);
+
 
     musicToggleButton = new QPushButton("Stop Music", this);
     musicToggleButton->setGeometry(width() - 120, height() - 60, 100, 40);  // 设置按钮位置（右下角）
@@ -265,7 +266,9 @@ void game::setDifficulty(DifficultyLevel level)
         break;
     }
 
-    timeLeft = timeLimit;  // 设置剩余时间
-    timeProgressBar->setRange(0, timeLimit);  // 设置时间条范围
-    timeProgressBar->setValue(timeLimit);  // 设置初始值
+    // timeLeft = timeLimit;  // 设置剩余时间
+    // timeProgressBar->setRange(0, timeLimit);  // 设置时间条范围
+    // timeProgressBar->setValue(timeLimit);  // 设置初始值
+
+    createmap();
 }
