@@ -1,0 +1,27 @@
+<RCC>
+    <qresource prefix="/new/shadow">
+        <file>image/shadow/1.png</file>
+        <file>image/shadow/2.png</file>
+        <file>image/shadow/3.png</file>
+        <file>image/shadow/4.png</file>
+        <file>image/shadow/5.png</file>
+        <file>image/shadow/6.png</file>
+        <file>image/shadow/7.png</file>
+        <file>image/shadow/8.png</file>
+        <file>image/shadow/9.png</file>
+        <file>image/shadow/10.png</file>
+        <file>image/shadow/11.png</file>
+        <file>image/shadow/12.png</file>
+        <file>image/shadow/13.png</file>
+        <file>image/shadow/14.png</file>
+        <file>image/shadow/15.png</file>
+        <file>image/shadow/16.png</file>
+        <file>image/shadow/17.png</file>
+        <file>image/shadow/18.png</file>
+        <file>image/shadow/19.png</file>
+        <file>image/shadow/20.png</file>
+        <file>image/shadow/21.png</file>
+        <file>image/shadow/22.png</file>
+        <file>image/shadow/23.png</file>
+    </qresource>
+</RCC>

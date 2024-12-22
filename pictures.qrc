@@ -1,0 +1,32 @@
+<RCC>
+    <qresource prefix="/new/pictures">
+        <file>image/pictures/1.png</file>
+        <file>image/pictures/2.png</file>
+        <file>image/pictures/3.png</file>
+        <file>image/pictures/4.png</file>
+        <file>image/pictures/5.png</file>
+        <file>image/pictures/6.png</file>
+        <file>image/pictures/7.png</file>
+        <file>image/pictures/8.png</file>
+        <file>image/pictures/9.png</file>
+        <file>image/pictures/10.png</file>
+        <file>image/pictures/11.png</file>
+        <file>image/pictures/12.png</file>
+        <file>image/pictures/13.png</file>
+        <file>image/pictures/14.png</file>
+        <file>image/pictures/15.png</file>
+        <file>image/pictures/16.png</file>
+        <file>image/pictures/17.png</file>
+        <file>image/pictures/18.png</file>
+        <file>image/pictures/19.png</file>
+        <file>image/pictures/20.png</file>
+        <file>image/pictures/21.png</file>
+        <file>image/pictures/22.png</file>
+        <file>image/pictures/23.png</file>
+        <file>image/background.png</file>
+        <file>image/obstacle.jpg</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>image/1d.png</file>
+    </qresource>
+</RCC>
