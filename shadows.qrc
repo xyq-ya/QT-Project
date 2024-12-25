@@ -1,0 +1,4 @@
+<RCC>
+    <qresource prefix="/shadow"/>
+    <qresource prefix="/"/>
+</RCC>
