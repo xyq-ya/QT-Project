@@ -4,7 +4,6 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QVBoxLayout>
-#include <QPainter>
 
 enum DifficultyLevel {
     EASY,    // 简单
@@ -23,14 +22,19 @@ public:
     int getTimeLimit() const;                   // 获取时间限制
     int getBlockCount() const;                  // 获取方块数量
     int getObstacleCount() const;               // 获取障碍物数量
-private slots:
 
+protected:
+    void paintEvent(QPaintEvent *event) override;
+
+private slots:
     void onEasyClicked();   // 简单按钮点击槽
     void onMediumClicked(); // 中等按钮点击槽
     void onHardClicked();   // 困难按钮点击槽
 
+public slots:
+    void exit();
+
 private:
-    void paintEvent(QPaintEvent *event) override;
     DifficultyLevel currentDifficulty;   // 当前难度
     int timeLimit;                       // 游戏时间限制
     int blockCount;                      // 方块数量

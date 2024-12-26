@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include "degreeofdifficulty.h"
+#include "menu.h"
 #include <QWidget>
 #include <musicplayer.h>
 #include <QPainter>
@@ -21,9 +22,9 @@ class game;
 class game : public QWidget
 {
     Q_OBJECT
+
 signals:
-    void resumeGame();  // 继续游戏
-    void exitGame();    // 退出游戏
+    void exit();    // 退出游戏
 
 private:
     // 存储路径的节点
@@ -55,13 +56,16 @@ protected:
 private slots:
     void toggleMusic();  // 用于切换背景音乐的槽函数
     void openMenu(); //菜单
+    void giveTips();
     void updateTime();  //更新时间条的进度
     void clearEliminationPath();
     void mousePressEvent(QMouseEvent *event) override;
+    void exitGame();    // 退出游戏
 
 private:
     Ui::game *ui;
-    DifficultyLevel currentDifficulty;  // 当前选择的游戏难度
+    DifficultyLevel currentDifficulty;  //游戏难度
+    Menu *pauseMenu;//菜单
 
     enum { Null, Right, Left, Up, Down };  // 判断上下左右或者原点，用于规划路径
     enum { imagenum = 25 };
@@ -90,6 +94,7 @@ private:
     std::vector<QPixmap> icons;
     QPushButton *musicToggleButton;  // 音乐按钮
     QPushButton *pauseButton;
+    QPushButton *tips;
     bool musicPlaying = true;  // 背景音乐是否正在播放的标志
     QProgressBar *timeProgressBar;  // 时间条
     QTimer *timer;                  // 定时器

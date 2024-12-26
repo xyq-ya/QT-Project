@@ -15,6 +15,7 @@ SOURCES += \
     menu.cpp \
     musicplayer.cpp \
     splashscreen.cpp \
+    victory.cpp \
     widget.cpp
 
 HEADERS += \
@@ -24,6 +25,7 @@ HEADERS += \
     menu.h \
     musicplayer.h \
     splashscreen.h \
+    victory.h \
     widget.h
 
 FORMS += \
@@ -41,7 +43,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    Game_673/image/back1.png \
     image/1.png \
     image/10.png \
     image/11.png \
@@ -96,4 +97,5 @@ DISTFILES += \
     sound/select.wav
 
 RESOURCES += \
-    icons.qrc
+    images.qrc \
+    shadow.qrc

@@ -1,5 +1,5 @@
 #include "widget.h"
-#include "game.h"
+#include "victory.h"
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
@@ -19,11 +19,12 @@ int main(int argc, char *argv[])
         }
     }
 
-     //srand(time(nullptr));
-     //game g;
-     //g.show();
+     Widget w;
+     w.show();
+     return a.exec();
 
-    Widget w;
-    w.show();
-    return a.exec();
+     //测试胜利界面，测试前把上方widget三行都注释掉
+    // victory *vic = new victory();
+    // vic->show();
+    // return a.exec();
 }

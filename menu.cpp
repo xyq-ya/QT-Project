@@ -32,6 +32,7 @@ Menu::Menu(QWidget *parent)
 
 void Menu::restartGame()
 {
+    //暂定
     this->close();
 }
 
@@ -47,3 +48,4 @@ void Menu::onExitButtonClicked()
     emit exitGame();    // 触发退出游戏信号
     this->close();      // 关闭暂停菜单
 }
+

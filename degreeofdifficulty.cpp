@@ -11,7 +11,6 @@ DegreeOfDifficulty::DegreeOfDifficulty(QWidget *parent)
     blockCount(5),           // 默认方块数量5
     obstacleCount(3)         // 默认障碍物数量3
 {
-
     setWindowTitle("难度选择");
     setFixedSize(300, 400);
     // 创建按钮
@@ -30,18 +29,18 @@ DegreeOfDifficulty::DegreeOfDifficulty(QWidget *parent)
     //设置按钮
     easyButton->setFont(font);
     easyButton->setStyleSheet("QPushButton {"
-                               "background-color: transparent;"
-                               "border: none;"
-                               "text-align: center;"
-                               "color: black;"
-                               "}");
+                              "background-color: transparent;"
+                              "border: none;"
+                              "text-align: center;"
+                              "color: black;"
+                              "}");
     mediumButton->setFont(font);
     mediumButton->setStyleSheet("QPushButton {"
-                                  "background-color: transparent;"
-                                  "border: none;"
-                                  "text-align: center;"
-                                  "color: black;"
-                                  "}");
+                                "background-color: transparent;"
+                                "border: none;"
+                                "text-align: center;"
+                                "color: black;"
+                                "}");
     hardButton->setFont(font);
     hardButton->setStyleSheet("QPushButton {"
                               "background-color: transparent;"
@@ -123,6 +122,11 @@ void DegreeOfDifficulty::onHardClicked()
     this->close();
 }
 
+void DegreeOfDifficulty::exit()
+{
+
+}
+
 void DegreeOfDifficulty::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
@@ -130,6 +134,6 @@ void DegreeOfDifficulty::paintEvent(QPaintEvent *event)
 
     // 绘制背景
     QPixmap background;
-    background.load(":/images/Game_673/image/back3.png");
+    background.load(":/images/image/back3.png");
     painter.drawPixmap(0, 0, width(), height(), background);
 }
