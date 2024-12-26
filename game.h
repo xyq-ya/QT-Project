@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include "degreeofdifficulty.h"
+#include "menu.h"
 #include <QWidget>
 #include <musicplayer.h>
 #include <QPainter>
@@ -13,6 +14,8 @@
 #include <iostream>
 #include <vector>
 #include <limits>
+#include <QFile>
+
 
 namespace Ui {
 class game;
@@ -21,9 +24,9 @@ class game;
 class game : public QWidget
 {
     Q_OBJECT
+
 signals:
-    void resumeGame();  // 继续游戏
-    void exitGame();    // 退出游戏
+    void exit();    // 退出游戏
 
 private:
     // 存储路径的节点
@@ -38,7 +41,7 @@ private:
     int minTurns = std::numeric_limits<int>::max();
 
 public:
-    explicit game(DifficultyLevel level, QWidget *parent = nullptr);  // 修改构造函数，接受一个 DifficultyLevel 参数
+    explicit game(DifficultyLevel level,int record[16][12],QWidget *parent = nullptr);  //构造函数，接受一个难度变量，一个地图信息变量
     ~game();
     void createmap();  // 初始化地图
     void recreate();   // 更新地图信息
@@ -54,19 +57,25 @@ protected:
 
 private slots:
     void toggleMusic();  // 用于切换背景音乐的槽函数
+    void saveGame();
     void openMenu(); //菜单
+    void giveTips();
     void updateTime();  //更新时间条的进度
     void clearEliminationPath();
     void mousePressEvent(QMouseEvent *event) override;
+    void exitGame();    // 退出游戏
 
 private:
     Ui::game *ui;
-    DifficultyLevel currentDifficulty;  // 当前选择的游戏难度
+    DifficultyLevel currentDifficulty;  //游戏难度
+    Menu *pauseMenu;//菜单
 
     enum { Null, Right, Left, Up, Down };  // 判断上下左右或者原点，用于规划路径
     enum { imagenum = 25 };
     enum { MaxSizeX = 14, MaxSizeY = 10 };  // 横向14张图片，纵向10张图片
     int map[MaxSizeX + 2][MaxSizeY + 2];  // 地图信息，加二考虑两边需要连线表示消除，其值为0时就默认为该处为空白，不为0地图信息即为对应图片标号
+    int saveMap[16][12];
+    int readMap[16][12];//保存地图信息
     int count;  // 记录该次连线拐弯次数
     int num[imagenum + 1];  // 记录每个图片的剩余次数，暂时不刷新地图便可先不做考虑
 
@@ -90,6 +99,8 @@ private:
     std::vector<QPixmap> icons;
     QPushButton *musicToggleButton;  // 音乐按钮
     QPushButton *pauseButton;
+    QPushButton *saveButton;
+    QPushButton *tips;
     bool musicPlaying = true;  // 背景音乐是否正在播放的标志
     QProgressBar *timeProgressBar;  // 时间条
     QTimer *timer;                  // 定时器

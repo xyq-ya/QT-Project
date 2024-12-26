@@ -1,22 +1,34 @@
 #include "game.h"
-#include "menu.h"
 #include "qtpreprocessorsupport.h"
 #include "ui_game.h"
 #include <QTimer>
 #include <QMessageBox>
 #include <QDebug>
 
-game::game(DifficultyLevel level, QWidget *parent)
+game::game(DifficultyLevel level, int record[16][12], QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::game)
     , currentDifficulty(level)
 {
+    //测试用数组
+    for (int row = 0; row < 16; ++row) {
+        for (int col = 0; col < 12; ++col){
+            readMap[row][col]=record[row][col];
+        }
+    }
+
+    //readMap数组为空新建地图，不为空按照数组信息绘画
+    if(readMap[0][0]==70){
+        createmap();
+    }else{
+        setDifficulty(currentDifficulty);
+    }
+
+
+    //设置音乐播放器
     ui->setupUi(this);
     player = new MusicPlayer();
     player->PlayBackground();
-
-    // 根据难度调整地图
-    setDifficulty(level);
 
     //音乐开关按钮
     musicToggleButton = new QPushButton("Stop Music", this);
@@ -28,6 +40,16 @@ game::game(DifficultyLevel level, QWidget *parent)
     pauseButton->setGeometry(width() - 100, height() - 80, 100, 40);
     connect(pauseButton, &QPushButton::clicked, this, &game::openMenu);
 
+    //保存游戏按钮
+    saveButton = new QPushButton("保存游戏",this);
+    saveButton ->setGeometry(width()-100,height()-160,100,40);
+    connect(saveButton, &QPushButton::clicked, this, &game::saveGame);
+
+    tips = new QPushButton("Tips", this);
+    tips->setGeometry(width() - 100, height() - 120, 100, 40);
+    connect(tips, &QPushButton::clicked, this, &game::giveTips);
+
+
     //游戏时间计时器
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &game::updateTime);
@@ -35,11 +57,9 @@ game::game(DifficultyLevel level, QWidget *parent)
 
     clearTimer = new QTimer(this);
     connect(clearTimer, &QTimer::timeout, this, &game::clearEliminationPath);
-    //qDebug()<<"爱你，黄哥！";
 }
 
-game::~game()
-{
+game::~game(){
     delete ui;
 }
 
@@ -50,12 +70,12 @@ void game::paintEvent(QPaintEvent *event){
 
     // 绘制背景
     QPixmap background;
-    background.load(":/shadows/Game_673/image/1d.png");
+    background.load(":/background/image/1d.png");
     painter.drawPixmap(0, 0, width(), height(), background);
 
     // 计算每个矩形的宽度和高度
-    int rectWidth = width() / 12;  // 计算矩形的宽度
-    int rectHeight = height() / 16; // 计算矩形的高度
+    int rectWidth = width() / 12;
+    int rectHeight = height() / 16;
 
     // 绘制矩形区域
     for (int row = 0; row < 16; ++row) {
@@ -66,7 +86,7 @@ void game::paintEvent(QPaintEvent *event){
 
             // 绘制障碍物
             QPixmap obstracle;
-            obstracle.load(":/shadows/Game_673/image/obstacle.jpg");
+            obstracle.load(":/background/image/obstacle.jpg");
 
             bool isPressed = false;
             for (const auto& point : pressArray) {
@@ -107,25 +127,22 @@ void game::paintEvent(QPaintEvent *event){
         update();
     }
 
-    // 绘制得分
-    painter.setPen(Qt::black);  // 设置文本颜色为黑色
-    QFont font = painter.font();  // 获取默认字体
-    font.setPointSize(16);  // 设置字体大小
-    painter.setFont(font);  // 设置字体
-    painter.drawText(10, 30, "得分：");  // 绘制文本，(10, 30)为文本位置
+    // 绘制得分与连线
+    painter.setPen(Qt::black);
+    QFont font = painter.font();
+    font.setPointSize(16);
+    painter.setFont(font);
+    painter.drawText(10, 30, "得分：");
 
-    // 假设你的分数存储在一个名为 `score` 的变量中
     painter.drawText(70, 30, QString::number(score));
 
     QString timeText = QString("剩余时间：%1秒").arg(remainingTime);
-    painter.setPen(Qt::black);  // 设置文本颜色为黑色
-    painter.drawText(width() - 150, 30, timeText);  // 绘制在右上角
+    painter.setPen(Qt::black);
+    painter.drawText(width() - 150, 30, timeText);
 
-    painter.setPen(QPen(Qt::black, 2));  // 设置画笔为黑色，宽度为2
+    painter.setPen(QPen(Qt::black, 2));
 
-    // 获取矩形的高度和宽度
     for (int i = 0; i < eliminationpath.size() - 1; ++i) {
-        // 计算每个点的实际屏幕坐标
         QPointF start = QPointF(
             rectWidth / 2 + rectWidth * eliminationpath[i].y(),
             rectHeight / 2 + rectHeight * eliminationpath[i].x()
@@ -136,7 +153,6 @@ void game::paintEvent(QPaintEvent *event){
             rectHeight / 2 + rectHeight * eliminationpath[i + 1].x()
             );
 
-        // 绘制连线
         painter.drawLine(start, end);
     }
 
@@ -149,35 +165,110 @@ void game::toggleMusic()
 {
     if (musicPlaying) {
         player->stopLoop();  // 停止背景音乐
-        musicToggleButton->setText("Play Music");  // 更新按钮文本为 "Play Music"
+        musicToggleButton->setText("Play Music");
     } else {
         player->PlayBackground();  // 播放背景音乐
-        musicToggleButton->setText("Stop Music");  // 更新按钮文本为 "Stop Music"
+        musicToggleButton->setText("Stop Music");
     }
     musicPlaying = !musicPlaying;  // 切换音乐状态
 }
 
+void game::saveGame(){
+    for (int row = 0; row < 16; ++row) {
+        for (int col = 0; col < 12; ++col){
+            saveMap[row][col]=map[row][col];
+        }
+    }
+    qDebug()<<"保存的地图信息"<<saveMap[1][1];
+
+    // 创建文件对象，指定路径为 D 盘的 code 文件夹
+    QFile file("D:/code/QT-Project-zjw1226/savegame/saveMap.txt");
+
+    // 打开文件，以写入模式（这会删除原文件内容）
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+
+        // 将 saveMap 数据写入文件
+        for (int row = 0; row < 16; ++row) {
+            for (int col = 0; col < 12; ++col) {
+                out << saveMap[row][col];
+
+                // 添加空格分隔列
+                if (col < 11) {
+                    out << " ";
+                }
+            }
+            // 换行
+            out << "\n";
+        }
+        out<<remainingTime;
+        // 关闭文件
+        file.close();
+        qDebug() << "游戏保存成功";
+    } else {
+        qDebug() << "无法打开文件保存数据";
+    }
+
+}
+
 void game::openMenu()
 {
-    // 停止计时器，暂停游戏
-    timer->stop();
-    clearTimer->stop();
-
     // 创建并显示暂停菜单
-    Menu *pauseMenu = new Menu();
+    pauseMenu = new Menu();
     pauseMenu->show();
+}
 
-    // 连接暂停菜单的信号，玩家选择继续或退出
-    //connect(pauseMenu, &Menu::resumeGame, this, &game::resumeGame);
-    //connect(pauseMenu, &Menu::exitGame, this, &game::exitGame);
+void game::giveTips()
+{
+    eliminationpath.clear();
 
+    int rows = 16;
+    int cols = 12;
+
+    if(rewardtime>0){
+        for (int x1 = 1; x1 < rows; ++x1)
+        {
+            for (int y1 = 1; y1 < cols; ++y1)
+            {
+                if (map[x1][y1] <= 0)
+                    continue;
+
+                for (int x2 = 1; x2 < rows; ++x2)
+                {
+                    for (int y2 = 1; y2 < cols; ++y2)
+                    {
+                        if ((x1 == x2 && y1 == y2) || map[x2][y2] <= 0)
+                            continue;
+
+                        if (map[x1][y1] == map[x2][y2])
+                        {
+                            if (eliminate(x1, y1, x2, y2))
+                            {
+                                eliminationpath.append(QPointF(x2, y2));
+                                map[x1][y1] = 0;
+                                map[x2][y2] = 0;
+
+                                player->PlayRelese();
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }else{
+        qDebug()<<"提示次数已用完";
+        return;
+    }
+    eliminationpath.clear();
 }
 
 void game::updateTime()
 {
     if (remainingTime > 0) {
-        --remainingTime;  // 每秒减少1秒
-        update();  // 更新界面
+        --remainingTime;
+        update();
     }
 }
 
@@ -187,7 +278,7 @@ void game::clearEliminationPath()
     eliminationpath.clear();
     // 停止定时器，防止重复清空
     clearTimer->stop();
-    // 刷新界面
+
     update();
 }
 
@@ -264,11 +355,17 @@ void game::mousePressEvent(QMouseEvent *event)
     }
 }
 
+void game::exitGame()
+{
+    emit exit();
+
+}
+
 void game::createmap(){
     //初始化图片组
     for (int i = 1; i <= 23; i++) {
         QPixmap a;
-        QString imagePath = QString(":/images/Game_673/image/pictures/%1.png").arg(i);  // 生成图片路径
+        QString imagePath = QString(":/images/image/pictures/%1.png").arg(i);  // 生成图片路径
         a.load(imagePath);  // 加载图片
         if (!a.isNull()) {  // 检查图片是否加载成功
             icons.push_back(a);  // 将加载的图片加入 vector
@@ -280,7 +377,7 @@ void game::createmap(){
     //初始化阴影组
     for (int i = 1; i <= 23; i++) {
         QPixmap b;
-        QString imagePath = QString(":/shadows/Game_673/image/shadow/%1.png").arg(i);  // 生成图片路径
+        QString imagePath = QString(":/shadows/image/shadow/%1.png").arg(i);  // 生成图片路径
         b.load(imagePath);  // 加载图片
         if (!b.isNull()) {  // 检查图片是否加载成功
             shadow.push_back(b);  // 将加载的图片加入 vector
@@ -289,68 +386,69 @@ void game::createmap(){
         }
     }
 
-    //用于标记数组元素是否已经赋值
-    bool visited[16][12] = {{false}};
-    // 初始化地图, 外围区域赋值为0，中间[1][1]到[14][10]为地址信息
-    for(int j = 0; j < 16; j++) {
-        for(int k = 0; k < 12; k++) {
-            if (j == 0 || k == 0 || j == 15 || k == 11) {
-                map[j][k] = 0;  // 边界
-                visited[j][k] = true;
-            } else {
-                map[j][k] = 0;  // 默认没有图片
-                visited[j][k] = false;
+    //若传入数组参数为70，随机生成
+    //传入数组已经赋值，按照数组信息绘制
+    if(readMap[0][0]!=70){
+        for(int j = 0; j < 16; j++) {
+            for(int k = 0; k < 12; k++){
+                map[j][k]=readMap[j][k];
             }
         }
-    }
+    }else{
+        //用于标记数组元素是否已经赋值
+        bool visited[16][12] = {{false}};
+        // 初始化地图, 外围区域赋值为0，中间[1][1]到[14][10]为地址信息
+        for(int j = 0; j < 16; j++) {
+            for(int k = 0; k < 12; k++) {
 
-    // 生成障碍物
-    int obstaclesPlaced = 0;
-    while (obstaclesPlaced < obstaclenum) {
-        int randJ = rand() % 14 + 1;  // 随机生成行 [1, 14]
-        int randK = rand() % 10 + 1;  // 随机生成列 [1, 10]
-
-        if (map[randJ][randK] == 0 && !visited[randJ][randK]) {
-            map[randJ][randK] = -1;  // 用 -1 表示障碍物
-            visited[randJ][randK] = true;
-            obstaclesPlaced++;
-        }
-    }
-
-    // 初始化其它方块和图片
-    //bool visited2[16][12] = {{false}};
-    for(int j = 1; j < 15; j++) {
-        for(int k = 1; k < 11; k++) {
-            if (map[j][k] == 0 && !visited[j][k]) {
-                int a = rand() % 24;
-                if (a != 0 && !visited[j][k]) {
-                    map[j][k] = a;
+                if (j == 0 || k == 0 || j == 15 || k == 11) {
+                    map[j][k] = 0;  // 边界
                     visited[j][k] = true;
-                    bool assigned = false;
-                    while (!assigned) {
-                        int randJ = rand() % 14 + 1;  // 生成随机的行位置 [1, 14]
-                        int randK = rand() % 10 + 1;  // 生成随机的列位置 [1, 10]
+                } else {
+                    map[j][k] = 0;  // 默认没有图片
+                    visited[j][k] = false;
+                }
+            }
+        }
 
-                        // 如果该位置未被访问，则赋值
-                        if (!visited[randJ][randK]) {
-                            map[randJ][randK] = a;  // 给随机位置赋值
-                            visited[randJ][randK] = true;  // 标记该位置已访问
-                            assigned = true;  // 赋值成功，跳出循环
+        // 生成障碍物
+        int obstaclesPlaced = 0;
+        while (obstaclesPlaced < obstaclenum) {
+            int randJ = rand() % 14 + 1;  // 随机生成行 [1, 14]
+            int randK = rand() % 10 + 1;  // 随机生成列 [1, 10]
+
+            if (map[randJ][randK] == 0 && !visited[randJ][randK]) {
+                map[randJ][randK] = -1;  // 用 -1 表示障碍物
+                visited[randJ][randK] = true;
+                obstaclesPlaced++;
+            }
+        }
+
+        // 初始化其它方块和图片
+        for(int j = 1; j < 15; j++) {
+            for(int k = 1; k < 11; k++) {
+                if (map[j][k] == 0 && !visited[j][k]) {
+                    int a = rand() % 24;
+                    if (a != 0 && !visited[j][k]) {
+                        map[j][k] = a;
+                        visited[j][k] = true;
+                        bool assigned = false;
+                        while (!assigned) {
+                            int randJ = rand() % 14 + 1;  // 生成随机的行位置 [1, 14]
+                            int randK = rand() % 10 + 1;  // 生成随机的列位置 [1, 10]
+
+                            // 如果该位置未被访问，则赋值
+                            if (!visited[randJ][randK]) {
+                                map[randJ][randK] = a;  // 给随机位置赋值
+                                visited[randJ][randK] = true;  // 标记该位置已访问
+                                assigned = true;  // 赋值成功，跳出循环
+                            }
                         }
                     }
                 }
             }
         }
     }
-
-    for (int i = 0; i < 16; ++i) {
-        QString row = "";
-        for (int j = 0; j < 12; ++j) {
-            row += QString::number(map[i][j]) + " ";
-        }
-        qDebug() << row;
-    }
-
 }
 
 //消除检测以及拐弯算法
@@ -369,11 +467,14 @@ bool game::eliminate(int x, int y, int x2, int y2)
     {
         return false;
     }
+
     eliminationpath.append(QPointF(x,y));
+
     int a = x-x2;
     int b = y-y2;
     int x1=x;
     int y1=y;
+
     if(x<0||x>15||y<0||y>15||x2<0||x2>15||y2<0||y2>12){
         return false;
     }
@@ -468,15 +569,15 @@ bool game::eliminate(int x, int y, int x2, int y2)
                     if(x1>=0&&x1<16&&y1>=0&&y1<12){
                         qDebug()<<x1<<","<<y1;
                         if(eliminate(x1,y1,x2,y2))return true;
-                    }
-                    y1+=d;
-                    if(x1>=0&&x1<16&&y1>=0&&y1<12){
-                        qDebug()<<x1<<","<<y1;
-                        if(eliminate(x1,y1,x2,y2))return true;
-                    }else if(map[x][y-1]==0&&d!=1){
+                        }
+                }else if(map[x][y-1]==0&&d!=1){
                         c=0;
                         d=-1;
                         x1+=c;
+                        y1+=d;
+                        if(x1>=0&&x1<16&&y1>=0&&y1<12){
+                            qDebug()<<x1<<","<<y1;
+                            if(eliminate(x1,y1,x2,y2))return true;
                     }
                 }else if(map[x][y+1]==0&&d!=-1){
                     c=0;
@@ -499,7 +600,6 @@ bool game::eliminate(int x, int y, int x2, int y2)
                 }
             }
         }else if(a>0){
-            //if(eliminate(x2,y2,x,y))return true;
             if(b<0){
                 if(map[x][y+1]==0&&d!=-1){
                     c=0;
@@ -616,9 +716,10 @@ bool game::eliminate(int x, int y, int x2, int y2)
                 }
             }
         }else{
-            if(map[x+1][y]==0&&c!=-1){
-                c=1;
-                d=0;
+            if(b>0){
+            if(map[x][y-1]==0&&d!=1){
+                c=0;
+                d=-1;
                 x1+=c;
                 y1+=d;
                 if(x1>=0&&x1<16&&y1>=0&&y1<12){
@@ -627,6 +728,15 @@ bool game::eliminate(int x, int y, int x2, int y2)
                 }
             }else if(map[x-1][y]==0&&c!=1){
                 c=-1;
+                d=0;
+                x1+=c;
+                y1+=d;
+                if(x1>=0&&x1<16&&y1>=0&&y1<12){
+                    qDebug()<<x1<<","<<y1;
+                    if(eliminate(x1,y1,x2,y2))return true;
+                }
+            }else if(map[x+1][y]==0&&c!=-1){
+                c=1;
                 d=0;
                 x1+=c;
                 y1+=d;
@@ -643,14 +753,44 @@ bool game::eliminate(int x, int y, int x2, int y2)
                     qDebug()<<x1<<","<<y1;
                     if(eliminate(x1,y1,x2,y2))return true;
                 }
-            }else if(map[x][y-1]==0&&d!=1){
-                c=0;
-                d=-1;
-                x1+=c;
-                y1+=d;
-                if(x1>=0&&x1<16&&y1>=0&&y1<12){
-                    qDebug()<<x1<<","<<y1;
-                    if(eliminate(x1,y1,x2,y2))return true;
+            }
+            }else if(b<0){
+                if(map[x][y+1]==0&&d!=-1){
+                    c=0;
+                    d=-1;
+                    x1+=c;
+                    y1+=d;
+                    if(x1>=0&&x1<16&&y1>=0&&y1<12){
+                        qDebug()<<x1<<","<<y1;
+                        if(eliminate(x1,y1,x2,y2))return true;
+                    }
+                }else if(map[x-1][y]==0&&c!=1){
+                    c=-1;
+                    d=0;
+                    x1+=c;
+                    y1+=d;
+                    if(x1>=0&&x1<16&&y1>=0&&y1<12){
+                        qDebug()<<x1<<","<<y1;
+                        if(eliminate(x1,y1,x2,y2))return true;
+                    }
+                }else if(map[x+1][y]==0&&c!=-1){
+                    c=1;
+                    d=0;
+                    x1+=c;
+                    y1+=d;
+                    if(x1>=0&&x1<16&&y1>=0&&y1<12){
+                        qDebug()<<x1<<","<<y1;
+                        if(eliminate(x1,y1,x2,y2))return true;
+                    }
+                }else if(map[x][y-1]==0&&d!=1){
+                    c=0;
+                    d=-1;
+                    x1+=c;
+                    y1+=d;
+                    if(x1>=0&&x1<16&&y1>=0&&y1<12){
+                        qDebug()<<x1<<","<<y1;
+                        if(eliminate(x1,y1,x2,y2))return true;
+                    }
                 }
             }
         }

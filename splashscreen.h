@@ -1,10 +1,10 @@
 #ifndef SPLASHSCREEN_H
 #define SPLASHSCREEN_H
 
-#include "degreeofdifficulty.h"
 #include <QWidget>
 #include <QPushButton>
-#include <QPainter>
+#include <QFile>
+#include "degreeofdifficulty.h"
 
 class splashscreen : public QWidget
 {
@@ -14,8 +14,10 @@ public:
     splashscreen(QWidget *parent = nullptr);
     ~splashscreen();
 
-private slots:
+protected:
     void paintEvent(QPaintEvent *event) override;
+
+private slots:
     void startGame();      // 开始游戏按钮的槽函数
     void continueGame();   // 继续游戏按钮的槽函数
     void gameInfo();       // 游戏信息按钮的槽函数
@@ -26,6 +28,8 @@ private:
     QPushButton *continueButton;
     QPushButton *infoButton;
     QPushButton *exitButton;
+    int recordMap[16][12];
+    DifficultyLevel level;
 };
 
 #endif // SPLASHSCREEN_H

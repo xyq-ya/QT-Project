@@ -4,7 +4,9 @@
 #include <QWidget>
 #include <QMessageBox>
 #include "game.h"
+#include "splashscreen.h"
 #include "database.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class Widget;
@@ -18,6 +20,9 @@ class Widget : public QWidget
 public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
+
+protected:
+    void paintEvent(QPaintEvent *event) override;
 
 private slots:
     void on_pushButton_clicked();

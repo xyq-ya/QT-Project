@@ -8,6 +8,7 @@
 class Menu : public QWidget
 {
     Q_OBJECT
+
 signals:
     void resumeGame();  // 继续游戏
     void exitGame();    // 退出游戏
