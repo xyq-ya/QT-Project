@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QSqlQuery>
 #include <QString>
+#include <QList>
 class DataBase
 {
 public:
@@ -12,6 +13,8 @@ public:
     bool Change(QString, QString);
     bool Delete(QString);
     bool Login(QString, QString);
+    bool Register(QString, int);
+    QList<QPair<QString,int>>* showscore();
 private:
     QSqlDatabase db;
 };
